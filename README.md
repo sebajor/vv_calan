@@ -14,6 +14,7 @@ https://github.com/FrancoCalan/roach_tools
 
 
 
-After yo could install the package using:
+When you have the require packet you could install the package using:
+
 pip install vv_calan/
 
