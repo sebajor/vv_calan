@@ -58,7 +58,7 @@ def PPC_start_measure(roachIP, read_cycles):
     tn.write('cd /var/tmp\n')
     time.sleep(1)
     tn.read_very_eager()
-    tn.write('busybox nohup ./ppc_save '+str(read_cycles+1)+' &\n') #TODO:check the time consistency, ie if it could run without the connection
+    tn.write('busybox nohup ./ppc_save '+str(read_cycles+1)+' &\n')
     time.sleep(1)
     tn.read_very_eager()
     time.sleep(1)
@@ -77,8 +77,7 @@ def PPC_start_measure(roachIP, read_cycles):
 
 
 def PPC_download_data(roachIP,pc_IP):
-    """EL TRASPASO DE DATOS ESTA FALLANDO
-    NO CACHO POR QUE :(
+    """
     """
     user = 'root'
     tn = telnetlib.Telnet(roachIP)
@@ -123,7 +122,7 @@ def PPC_kill_process(roachIP, pid):
     tn.read_very_eager()
     
     for i in range(3):
-        tn.write("ps | grep *ppc_save* \n")
+        tn.write("ps | grep *./ppc_save* \n")
         time.sleep(1)
         ans = tn.read_very_eager()
         print(ans)
@@ -136,7 +135,7 @@ def PPC_kill_process(roachIP, pid):
     else:
         tn.write('kill '+str(pid)+' \n')
         time.sleep(1)
-        tn.write("ps | grep *ppc_save* \n")
+        tn.write("ps | grep *./ppc_save* \n")
         time.sleep(1)
         ans = tn.read_very_eager()
         print('ps output: '+ans)
@@ -144,6 +143,7 @@ def PPC_kill_process(roachIP, pid):
 
 
 def PPC_check_status(roachIP):
+    ##IT HAS A BUG, IT RECOGNICE THE PS | GREP PPC_SAVE AS RUNNING APP..JAJA
     user = 'root'
     tn = telnetlib.Telnet(roachIP)
     tn.read_until("login: ")
@@ -152,7 +152,7 @@ def PPC_check_status(roachIP):
     tn.read_very_eager()
 
     for i in range(3):
-        tn.write("ps | grep *ppc_save* \n")
+        tn.write("ps | grep *./ppc_save* \n")
         time.sleep(1)
         ans = tn.read_very_eager()
         print(ans)

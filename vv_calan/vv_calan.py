@@ -225,7 +225,7 @@ class vv_calan(object):
         """Upload the required files to the ppc in the ROACH
         We connect through telnet to the 
         """
-        if(filepath!='ppc_save'):
+        if(file_path!='ppc_save'):
             PPC_upload_code(self.IP, (file_path))
         else:
             PPC_upload_code(self.IP, self.path)
@@ -268,7 +268,7 @@ class vv_calan(object):
         print('This method runs by default using the measurent duration as input to calculate the size of the file')
         print('If you had killed the process before it finished you could use the number of readings variable to change it.')
         if(n_reading==None):
-            parse_raw(filename, self.read_cycles*2)
+            parse_raw(filename, self.__read_cycles__*2)
         else:
             parse_raw(filename, n_reading)
 

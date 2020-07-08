@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="",
     url="https://github.com/sebajor/vv_calan",
     packages=setuptools.find_packages(),
+    package_data={'':['ppc_save*']},
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "License :: OSI Approved :: MIT License",
