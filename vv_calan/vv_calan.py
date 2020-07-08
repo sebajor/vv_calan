@@ -7,7 +7,7 @@ from parse_raw import parse_raw
 from plots import plot_data
 from get_data import get_spect0, get_spect1, get_phase, init_chann_data, get_chann_data
 import numpy as np
-import os.path
+import pkg_resources
 
 
 class vv_calan(object):
@@ -18,7 +18,7 @@ class vv_calan(object):
             ##Remember the sampling frequency is the double
             of the valon frequency
         """
-        self.path = os.path.abspath('ppc_save')
+        self.path = pkg_resources.resource_filename('vv_calan', 'ppc_save')
         self.IP = roachIP
         self.bof = bof_path
         self.valon_freq = valon_freq
@@ -225,8 +225,10 @@ class vv_calan(object):
         """Upload the required files to the ppc in the ROACH
         We connect through telnet to the 
         """
-        PPC_upload_code(self.IP, file_path)
-     
+        if(filepath!='ppc_save'):
+            PPC_upload_code(self.IP, (file_path))
+        else:
+            PPC_upload_code(self.IP, self.path)
 
     
     def ppc_meas(self, chann=6068 ,duration=30):

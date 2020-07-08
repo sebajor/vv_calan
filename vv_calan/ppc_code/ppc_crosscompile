@@ -1,0 +1,1 @@
+powerpc-linux-gnu-gcc -static -o hello1 hello.c 
