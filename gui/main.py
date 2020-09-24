@@ -5,7 +5,7 @@ import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import numpy as np
 from matplotlib.figure import Figure
-import ipdb
+#import ipdb
 import time, threading 
 import tkMessageBox
 

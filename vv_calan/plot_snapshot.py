@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import struct
 import numpy as np
-import ipdb
 
 class snapshot():
     def __init__(self, _fpga):

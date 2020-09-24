@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import time 
-import ipdb
 import matplotlib.animation as animation
 from get_data import *
 
