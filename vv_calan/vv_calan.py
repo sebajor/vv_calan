@@ -8,7 +8,7 @@ from plots import plot_data
 from get_data import get_spect0, get_spect1, get_phase, init_chann_data, get_chann_data
 import numpy as np
 import pkg_resources
-
+from calibrate_adcs import calibrate_adcs_visa
 
 class vv_calan(object):
     def __init__(self, roachIP, bof_path, valon_freq):
@@ -251,7 +251,7 @@ class vv_calan(object):
         """
         PPC_download_data(self.IP, pc_IP)
         
-
+    
     def ppc_finish_meas(self):
         """Finish the measurement before measure duration has 
            elapsed
@@ -279,9 +279,10 @@ class vv_calan(object):
 ###                         MUST MAKE CALIBRATION TO THE ADCS
 ###                         REFEAR TO THE DOCUMENT ATACHED IN
 ###                         THE GITHUB PAGE.
-
+""" 
+    ##old way to calibrate..
     def calibration(self, load=0, man_gen=0, ip_gen='192.168.1.33', filename='cal'):
-        """This function makes the calibration of the ROACH more 
+        This function makes the calibration of the ROACH more 
         understandable; you have to had installed the package 
         calandigital (https://github.com/FrancoCalan/calandigital)
         if you only want to make mcmm set load at 1
@@ -293,7 +294,7 @@ class vv_calan(object):
 
             -Sidenote: a common failure is to set bad the bw and it throws
             an error of representation
-        """
+
         parameter = "calibrate_adc5g.py"
         parameter += " -i "+str(self.IP)
         if(man_gen==0):
@@ -313,6 +314,14 @@ class vv_calan(object):
             parameter += " -ld "+str(filename)
         print(parameter)    
         os.system(parameter)
+"""
+    def calibrate_adcs(self, gen_ip, bw, gen_freq=10, gen_pow=-3, load=0, load_dir='', cal_dir='adc5gcal', manual=0):        
+            calibrate_adcs_visa(self.IP, self.valon_freq, gen_freq=gen_freq, 
+                gen_pow=gen_pow, load=load, load_dir=load_dir, 
+                cal_dir=cal_dir, manual=manual)
+        
+
+
 
 ###
 ###     CHANGE THE VALON FREQUENCY: TO USE THE CODES YOU MUST CONNECT
