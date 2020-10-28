@@ -1,7 +1,7 @@
 from vv_calan import vv_calan
 import numpy as np
 
-roach_ip = '192.168.0.40'      
+roach_ip = '192.168.1.10'      
 bofname = 'vv_casper.bof'
 valon_freq = 1080       #check the valon is working at the rigth freq
 
