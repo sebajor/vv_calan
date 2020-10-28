@@ -23,7 +23,7 @@ class vv_calan(object):
         self.bof = bof_path
         self.valon_freq = valon_freq
         self.fpga_clk = valon_freq/8.
-        self.bw = self.fpga_clk/2       #this is the bw after the decimation
+        self.bw = self.fpga_clk/2   #this is the bw after the decimation
         self.fpga = corr.katcp_wrapper.FpgaClient(self.IP)
         self.fft_size = 2**14
         self.channels = 2**13
@@ -65,8 +65,8 @@ class vv_calan(object):
         self.fpga.write_int('cnt_rst',1)
         self.set_integ_time(integ_time)
         self.fpga.write_int('cnt_rst',0)
-   
-     
+
+
 ###
 ###     IRIG TIMESTAMP INITIALIZATION CODES:
 ###             IF YOU WANT TO USE THE TIMESTAMP YOU MUST
@@ -89,35 +89,35 @@ class vv_calan(object):
         irig_pos_id = 0.8*T*self.fpga_clk*10**6*sec_factor
         irig_1 = 0.5*T*self.fpga_clk*10**6*sec_factor
         irig_0 = 0.2*T*self.fpga_clk*10**6*sec_factor
-        
+
         print('writing timestamp variables.....')
-        
+
         #those are the durations of every symbol in IRIG
         self.fpga.write_int('IRIG_irig_pos_id', irig_pos_id)
         self.fpga.write_int('IRIG_irig_1', irig_1)
         self.fpga.write_int('IRIG_irig_0', irig_0)
-    
-        
-        
+
+
+
         self.fpga.write_int('IRIG_sel_ind',0)           #1 only to debbugg the irig_read fsm
-        
+
         #settings for the debouncer fsm
         self.fpga.write_int('IRIG_waiting_in_vain', 20) #cycles that the gpio values may vary until sets to one
         self.fpga.write_int('IRIG_threshold', 20)       #cycles that the gpio values may vary until sets to zero
         self.fpga.write_int('IRIG_top_count', 100)      #the number of symbols of the first data frame, for debbuging only
         self.fpga.write_int('IRIG_bott_count', 100)     #the number of symbols of the dataframe, for debbuging only
-        
-        
+
+
         #set upper and lower limit of seconds that the timestamp
         #could vary to rise the flag of unlocking
         self.fpga.write_int('IRIG_frec_uplim', int(self.fpga_clk*10**6*(1+unlock_error)))   
         self.fpga.write_int('IRIG_frec_downlim', int(self.fpga_clk*10**6*(1-unlock_error))) 
-        
+
         ##with the previous registers set up, we obtain the time from the master clock
         self.calibrate_timestamp()
-    
-    
-    
+
+
+
     def calibrate_timestamp(self):
         """Get the time from the master clock
          This function enable obtain the time from the master clock
@@ -126,12 +126,12 @@ class vv_calan(object):
         self.fpga.write_int('IRIG_hrd_rst', 1)
         time.sleep(1)
         self.fpga.write_int('IRIG_hrd_rst', 0)
-            
+
         #start the calibration
         self.fpga.write_int('IRIG_cal',1)
         time.sleep(1)
         self.fpga.write_int('IRIG_cal',0)
-            
+
         #wait until the first frame is detected and received
         print('waiting for the master clock data...')
         time.sleep(3)
@@ -140,7 +140,7 @@ class vv_calan(object):
             aux = self.fpga.read_int('IRIG_terminate')
             if(aux == 1):
                 break
-            
+
         if(i==4):
             print('There might be a problem..its everything connected?')
             ans = raw_input('Do you want to try the calibration again?(y/n)')
@@ -155,12 +155,12 @@ class vv_calan(object):
             time.sleep(3)
             self.fpga.write_int('IRIG_try_again',1)
             self.fpga.write_int('IRIG_try_again',0)
-                 
+
             print('Timestamp calibration finished :D')
-    
 
 
-    
+
+
     def get_hour(self):
         """Translate the time from seconds of a year
         to day/hour/minutes/seconds
@@ -195,10 +195,10 @@ class vv_calan(object):
         """Plot animation of the ADC snapshot
         """
         snapshot(self.fpga)
-    
+
     def create_plot(self):
         self.plotter = plot_data(self.fpga)
-    
+
     def generate_plot(self, plots=['spect0','spect1'],chann=6068, freq=[0,67.5],manual_bw=0,bw=[0,67.5]):
         """
 
@@ -230,7 +230,7 @@ class vv_calan(object):
         else:
             PPC_upload_code(self.IP, self.path)
 
-    
+
     def ppc_meas(self, chann=6068 ,duration=30):
         """Measure and save the data in the PowerPC in the roach
            duration=time of the complete measure, in minutes 
@@ -242,7 +242,7 @@ class vv_calan(object):
         self.__read_cycles__ = int(duration*60./bram_period)
         self.__pid__ = PPC_start_measure(self.IP,self.__read_cycles__)
         print("PID of the process: "+str(self.__pid__))
-        
+
     def ppc_check_status(self):
         PPC_check_status(self.IP)        
 
@@ -250,14 +250,14 @@ class vv_calan(object):
         """Download the saved data to a computer
         """
         PPC_download_data(self.IP, pc_IP)
-        
-    
+
+
     def ppc_finish_meas(self):
         """Finish the measurement before measure duration has 
            elapsed
         """
         PPC_kill_process(self.IP, self.__pid__)
-    
+
 
 
     def parse_raw_data(self, filename='raw_data', n_reading=None):
@@ -279,8 +279,7 @@ class vv_calan(object):
 ###                         MUST MAKE CALIBRATION TO THE ADCS
 ###                         REFEAR TO THE DOCUMENT ATACHED IN
 ###                         THE GITHUB PAGE.
-""" 
-    ##old way to calibrate..
+    """     ##old way to calibrate..
     def calibration(self, load=0, man_gen=0, ip_gen='192.168.1.33', filename='cal'):
         This function makes the calibration of the ROACH more 
         understandable; you have to had installed the package 
@@ -314,16 +313,16 @@ class vv_calan(object):
             parameter += " -ld "+str(filename)
         print(parameter)    
         os.system(parameter)
-"""
-    def calibrate_adcs(self, gen_ip, bw, gen_freq=10, gen_pow=-3, load=0, load_dir='', cal_dir='adc5gcal', manual=0):        
-            calibrate_adcs_visa(self.IP, self.valon_freq, gen_freq=gen_freq, 
+        """
+    def calibrate_adcs(self,gen_ip,gen_freq=10,gen_pow=-3,load=0,load_dir='',cal_dir='adc5gcal',manual=0):
+        calibrate_adcs_visa(self.IP, gen_ip,self.valon_freq, gen_freq=gen_freq, 
                 gen_pow=gen_pow, load=load, load_dir=load_dir, 
                 cal_dir=cal_dir, manual=manual)
-        
 
 
 
-###
+
+        ###
 ###     CHANGE THE VALON FREQUENCY: TO USE THE CODES YOU MUST CONNECT
 ###                                 TO THE BACK OF THE ROACH WITH A 
 ###                                 MICRO-USB CONNECTOR.
@@ -362,7 +361,7 @@ class vv_calan(object):
         port: which port we are programming, 0 means A and 1 means B
         ##The actual sampling frequency is the double of new_freq
         beacause the ADC take a sample at the rising and falling edge
-    
+
         After changing the clock you should reset the vector voltmeter
         register and re-calibrate the timestamp.
 
@@ -382,7 +381,7 @@ class vv_calan(object):
     def synchronization(self):
         ##TODO...
         return    
-   
+
     def get_aprox_clk(self):
         """Gives an estimation measured inside of the FPGA
             of the fpga clock value. It is not exact as look at the 
@@ -404,7 +403,7 @@ class vv_calan(object):
         """
         return self.valon_freq*2
 
-    
+
     def get_fpga_clock(self):
         """Return the fpga clock, this is twice of
             the usefull bandwidth.
@@ -415,7 +414,7 @@ class vv_calan(object):
     def get_adc0_spect(self):
         out = get_spect0(self.fpga)
         return out
-    
+
     def get_adc1_spect(self):
         out = get_spect1(self.fpga)
         return out
@@ -423,7 +422,7 @@ class vv_calan(object):
     def get_rel_phase(self):
         out = get_phase(self.fpga)
         return out
-    
+
     def get_index(self, freq):
         """given a input frequency returns the
            nearest dft point.
@@ -432,7 +431,7 @@ class vv_calan(object):
         freqs = np.linspace(0, self.bw, self.channels, endpoint=False)
         ind = np.argmin(np.abs(freq-freqs))
         return ind
-    
+
 #THE FUNCTIONS DOWN THIS LINE ARE USED IN THE
 #MAP CREATION.. THEY DONT GET ALONG WITH THE
 #OPTION plots=['chan_values'] IN THE generate_plot
@@ -453,18 +452,18 @@ class vv_calan(object):
                  after the read)
         """
         init_chann_data(self.fpga, chann=chann, n_samp=n_samp, continous=continuous)
-    
+
 
     def get_chann_data(self, n_samp=1):
         """Get the data (power in ADC0, ADC1, correlation)
            of one given channel, before using it you must 
            have initialize with init_chann_aqc.
-            
+
            n_samp: must be the same value used in the
                    initialization function
-    
+
             ###obs: the powers are not in dB...
-    
+
         """
         [adc0,adc1, corr_re, corr_im] = get_chann_data(self.fpga, n_samp)
         return [adc0, adc1, corr_re, corr_im]
@@ -480,6 +479,5 @@ class vv_calan(object):
     def reset_freeze_cntr(self):
         #TODO
         return
-
 
 

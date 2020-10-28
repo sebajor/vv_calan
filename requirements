@@ -13,3 +13,7 @@ git+https://github.com/ska-sa/corr.git
 git+https://github.com/sma-wideband/adc_tests.git
 git+https://github.com/nrao/ValonSynth.git
 
+git+https://github.com/FrancoCalan/calandigital
+git+https://github.com/FrancoCalan/roach_tools
+
+

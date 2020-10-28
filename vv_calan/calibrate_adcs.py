@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import adc5g
 import pyvisa, datetime, tarfile, shutil, os 
-import ipdb
+#import ipdb
 
 def calibrate_adcs_visa(roach_ip, gen_ip, bw, gen_freq=10, gen_pow=-3,load=0,
                         load_dir='', cal_dir='adc5gcal', manual=0):
