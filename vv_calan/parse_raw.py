@@ -32,7 +32,7 @@ def parse_raw(raw_file, n_readings):
 			    frac_sec[8192*i:8192*(i+1)] = frac_data
                     except:
                         print('There is a problem in the iteration %i'%i)
-                        print('Check the size of your file, we parse %i MB'%(i*8192*8.*5)/2**20)
+                        print('Check the size of your file, we parse %f MB'%(i*8192*8.*5)/2**20)
                         break
 		raw_data.close()
 			
