@@ -1,6 +1,5 @@
-import corr
-import time,os
-import telnetlib
+import corr,time,os, telnetlib
+import calandigital as calan
 from plot_snapshot import snapshot
 from powerpc import PPC_upload_code, PPC_start_measure,PPC_download_data, PPC_kill_process, PPC_check_status
 from parse_raw import parse_raw
@@ -9,6 +8,8 @@ from get_data import get_spect0, get_spect1, get_phase, init_chann_data, get_cha
 import numpy as np
 import pkg_resources
 from calibrate_adcs import calibrate_adcs_visa
+import valon_config
+
 
 class vv_calan(object):
     def __init__(self, roachIP, bof_path, valon_freq):
@@ -24,7 +25,8 @@ class vv_calan(object):
         self.valon_freq = valon_freq
         self.fpga_clk = valon_freq/8.
         self.bw = self.fpga_clk/2   #this is the bw after the decimation
-        self.fpga = corr.katcp_wrapper.FpgaClient(self.IP)
+        
+        #self.fpga = corr.katcp_wrapper.FpgaClient(self.IP)
         self.fft_size = 2**14
         self.channels = 2**13
         self.n_acc = 10
@@ -32,7 +34,8 @@ class vv_calan(object):
     def upload_bof(self):
         """Upload the bof file to the ROACH
         """
-        self.fpga.upload_program_bof(self.bof, 3000)
+        self.fpga = calan.initialize_roach(self.IP, boffile=self.bof_path, upload=1) 
+        #self.fpga.upload_program_bof(self.bof, 3000)
         time.sleep(1)
 
 ###
@@ -330,6 +333,8 @@ class vv_calan(object):
 ###                                 CHANGING THIS VALUE AFECT THE FPGA 
 ###                                 CLOCK TOO.
 ###
+    
+    """
     def get_valon_status(self, port=1):
         """Prints the actual configuration of the valon
         """
@@ -351,9 +356,12 @@ class vv_calan(object):
         if(ref=='e'):
             parameter +=' -e'
         os.system(parameter)
-
-
-    def set_valon_freq(self, new_freq, port=1):
+"""
+    def get_valon_status(self, port='/dev/ttyUS0', synth='B'):
+        s, synth_num = valon_config.get_valon_status(port=port, synth=synth)
+        s.conn.close()
+    
+    #def set_valon_freq(self, new_freq, port=1):
         """
         To use this function is necessary to be connected 
         to the USB port of the valon
@@ -367,6 +375,7 @@ class vv_calan(object):
 
         #If you have some problem change the tty in the adc_clock script
         """
+    """
         parameter = "python adc_clock.py -f" + str(int(new_freq/2))
         if(port):
             parameter += ' -s B'
@@ -377,6 +386,14 @@ class vv_calan(object):
         else:
             parameter += ' -s A'
             os.system(parameter)
+"""
+    def set_valon_freq(self, new_freq, port='/dev/ttyUSB0', synth='B'):
+        valon_config.set_valon_freq(new_freq=new_freq, port=port, synth=synth)
+
+
+    def set_valon_ref(self, ref='i', port='/dev/ttyUSB0', synth='B'):
+        valon_config.set_valon_ref(ref=ref,port=port, synth=synth)
+
 
     def synchronization(self):
         ##TODO...
