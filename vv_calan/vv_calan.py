@@ -34,7 +34,7 @@ class vv_calan(object):
     def upload_bof(self):
         """Upload the bof file to the ROACH
         """
-        self.fpga = calan.initialize_roach(self.IP, boffile=self.bof_path, upload=1) 
+        self.fpga = calan.initialize_roach(self.IP, boffile=self.bof, upload=1) 
         #self.fpga.upload_program_bof(self.bof, 3000)
         time.sleep(1)
 
@@ -334,9 +334,9 @@ class vv_calan(object):
 ###                                 CLOCK TOO.
 ###
     
-    """
-    def get_valon_status(self, port=1):
+    #def get_valon_status(self, port=1):
         """Prints the actual configuration of the valon
+        """
         """
         parameter = "python adc_clock.py"
         if(port):
@@ -357,7 +357,7 @@ class vv_calan(object):
             parameter +=' -e'
         os.system(parameter)
 """
-    def get_valon_status(self, port='/dev/ttyUS0', synth='B'):
+    def get_valon_status(self, port='/dev/ttyUSB0', synth='B'):
         s, synth_num = valon_config.get_valon_status(port=port, synth=synth)
         s.conn.close()
     
@@ -484,12 +484,6 @@ class vv_calan(object):
         """
         [adc0,adc1, corr_re, corr_im] = get_chann_data(self.fpga, n_samp)
         return [adc0, adc1, corr_re, corr_im]
-
-
-
-
-
-
 
 
 
