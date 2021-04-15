@@ -131,7 +131,7 @@ def PPC_kill_process(roachIP, pid):
     
     if(i==3):
         print("The process has already finished")
-        return
+        return 1
     else:
         tn.write('kill '+str(pid)+' \n')
         time.sleep(1)
@@ -139,7 +139,7 @@ def PPC_kill_process(roachIP, pid):
         time.sleep(1)
         ans = tn.read_very_eager()
         print('ps output: '+ans)
-        return 
+        return ans
 
 
 def PPC_check_status(roachIP):
@@ -152,11 +152,14 @@ def PPC_check_status(roachIP):
     tn.read_very_eager()
 
     for i in range(3):
-        tn.write("ps | grep *./ppc_save* \n")
+        tn.write('ps | grep "[.]/ppc_save" \n')
         time.sleep(1)
         ans = tn.read_very_eager()
         print(ans)
-        if(ans.find('ppc_save')!=-1):
+        if(ans <30):
+            print("Process no found")
+            return 0
+        elif(ans[30:].find('ppc_save')!=-1):
             print('Process running')
             return 1
     print('Process not found')

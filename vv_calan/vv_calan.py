@@ -94,6 +94,12 @@ class vv_calan(object):
         irig_0 = 0.2*T*self.fpga_clk*10**6*sec_factor
 
         print('writing timestamp variables.....')
+        
+        #enable voltage translation, carefull if you have the roach connected
+        #to a timestap source you have to have the roach connected (not necessarily
+        #turn on) otherwise the voltage translator is going to reduce the IRIG signal
+        self.fpga.write_int('IRIG_voltage_oe',1)
+
 
         #those are the durations of every symbol in IRIG
         self.fpga.write_int('IRIG_irig_pos_id', irig_pos_id)
@@ -247,7 +253,8 @@ class vv_calan(object):
         print("PID of the process: "+str(self.__pid__))
 
     def ppc_check_status(self):
-        PPC_check_status(self.IP)        
+        stat = PPC_check_status(self.IP)        
+        return stat
 
     def ppc_download_data(self, pc_IP):
         """Download the saved data to a computer
@@ -387,9 +394,12 @@ class vv_calan(object):
             parameter += ' -s A'
             os.system(parameter)
 """
-    def set_valon_freq(self, new_freq, port='/dev/ttyUSB0', synth='B'):
-        valon_config.set_valon_freq(new_freq=new_freq, port=port, synth=synth)
-
+    def set_valon_freq(self, new_freq, port='/dev/ttyUSB0', synth='B', res=10.0):
+        valon_config.set_valon_freq(new_freq=new_freq, port=port, synth=synth, res=res)
+        self.valon_freq = new_freq
+        self.fpga_clk = self.valon_freq/8.
+        self.bw = self.fpga_clk/2   #this is the bw after the decimation
+        
 
     def set_valon_ref(self, ref='i', port='/dev/ttyUSB0', synth='B'):
         valon_config.set_valon_ref(ref=ref,port=port, synth=synth)
