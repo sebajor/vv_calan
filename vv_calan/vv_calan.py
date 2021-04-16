@@ -98,7 +98,7 @@ class vv_calan(object):
         #enable voltage translation, carefull if you have the roach connected
         #to a timestap source you have to have the roach connected (not necessarily
         #turn on) otherwise the voltage translator is going to reduce the IRIG signal
-        self.fpga.write_int('IRIG_voltage_oe',1)
+        self.fpga.write_int('IRIG_voltage_oe',2)
 
 
         #those are the durations of every symbol in IRIG

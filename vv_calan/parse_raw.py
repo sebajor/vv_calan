@@ -23,7 +23,7 @@ def parse_raw(raw_file, n_readings):
 			    im_data = phase[1::2]
 			    time = np.array(struct.unpack('>16384I', raw_data.read(8192*8)))
 			    sec_data = time[::2]
-			    frac_data = time[::2]
+			    frac_data = time[1::2]
 			    powA[8192*i:8192*(i+1)] = A2_data
 			    powB[8192*i:8192*(i+1)] = B2_data
 			    re[8192*i:8192*(i+1)] = re_data
