@@ -210,9 +210,22 @@ class vv_calan(object):
 
     def generate_plot(self, plots=['spect0','spect1'],chann=6068, freq=[0,67.5],manual_bw=0,bw=[0,67.5]):
         """
-
-        #Carefull using the plots containing chann_values with 
-        the poistion mapping, could mess up the map.
+            Plots an animation of the real time value (at the
+            network speed).
+            
+            plot_type is a list which may contain the following
+            options:
+        
+            -spect0: gives the spectrum of the ADC0
+            -spect1: gives the spectrum of the ADC1
+            -correlation: gives the real part and imaginary part
+            of the correlation of the whole range of channels
+            -phase: gives the relative phase between the 
+            ADC0 and ADC1 for whole range of FFT channels.
+            -chann_values: gives the magnitud of a given channel
+            in the ADC0 and ADC1, also gives the phase measured 
+            between the inputs.
+        
         """
         if(manual_bw):
             self.plotter.plotter(plots, chann=chann, freq=freq, bw=bw)        
