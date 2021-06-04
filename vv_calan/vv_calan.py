@@ -30,7 +30,9 @@ class vv_calan(object):
         self.fft_size = 2**14
         self.channels = 2**13
         self.n_acc = 10
-        self.fpga = corr.katcp_wrapper.FpgaClient(roachIP)
+        #self.fpga = corr.katcp_wrapper.FpgaClient(roachIP)
+        self.fpga = calan.initialize_roach(self.IP) 
+
 
     def upload_bof(self):
         """Upload the bof file to the ROACH
