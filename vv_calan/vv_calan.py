@@ -12,7 +12,7 @@ import valon_config
 
 
 class vv_calan(object):
-    def __init__(self, roachIP, bof_path, valon_freq):
+    def __init__(self, roachIP, bof_path, valon_freq, upload=0):
         """ Class constructor
             valon freq is the actual frequency of the valon,
             not the sampling frequency.
@@ -30,8 +30,10 @@ class vv_calan(object):
         self.fft_size = 2**14
         self.channels = 2**13
         self.n_acc = 10
-        #self.fpga = corr.katcp_wrapper.FpgaClient(roachIP)
-        self.fpga = calan.initialize_roach(self.IP) 
+        if(upload):
+            self.fpga = calan.initialize_roach(self.IP, boffile=self.bof, upload=0) 
+        else:
+            self.fpga = corr.katcp_wrapper.FpgaClient(roachIP)
 
 
     def upload_bof(self):
