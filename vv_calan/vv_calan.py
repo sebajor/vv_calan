@@ -248,17 +248,17 @@ class vv_calan(object):
 ###
 
 
-    def ppc_upload_code(self, file_path='ppc_save'):
+    def ppc_upload_code(self, file_path='ppc_save', sleep_time=0.5):
         """Upload the required files to the ppc in the ROACH
         We connect through telnet to the 
         """
         if(file_path!='ppc_save'):
-            PPC_upload_code(self.IP, (file_path))
+            PPC_upload_code(self.IP, (file_path), sleep_time=sleep_time)
         else:
-            PPC_upload_code(self.IP, self.path)
+            PPC_upload_code(self.IP, self.path, sleep_time=sleep_time)
 
 
-    def ppc_meas(self, chann=6068 ,duration=30):
+    def ppc_meas(self, chann=6068 ,duration=30, sleep_time=0.5):
         """Measure and save the data in the PowerPC in the roach
            duration=time of the complete measure, in minutes 
         """
@@ -267,11 +267,11 @@ class vv_calan(object):
         bram_addr = 8192.
         bram_period = self.fft_size*bram_addr*self.n_acc/(self.fpga_clk*10**6)*2 #we have two banks
         self.__read_cycles__ = int(duration*60./bram_period)
-        self.__pid__ = PPC_start_measure(self.IP,self.__read_cycles__)
+        self.__pid__ = PPC_start_measure(self.IP,self.__read_cycles__, sleep_time=sleep_time)
         print("PID of the process: "+str(self.__pid__))
 
-    def ppc_check_status(self):
-        stat = PPC_check_status(self.IP)        
+    def ppc_check_status(self, sleep_time=0.5):
+        stat = PPC_check_status(self.IP, sleep_time=sleep_time)        
         return stat
 
     def ppc_download_data(self, pc_IP):
@@ -280,15 +280,15 @@ class vv_calan(object):
         PPC_download_data(self.IP, pc_IP)
 
 
-    def ppc_finish_meas(self):
+    def ppc_finish_meas(self, sleep_time=0.5):
         """Finish the measurement before measure duration has 
            elapsed
         """
-        PPC_kill_process(self.IP, self.__pid__)
+        PPC_kill_process(self.IP, self.__pid__, sleep_time=sleep_time)
 
 
 
-    def parse_raw_data(self, filename='raw_data', n_reading=None):
+    def parse_raw_data(self, filename='raw_data', n_reading=None, out_name=None):
         """
         Parse the raw data after downloading the data from the 
         PowerPC and save it in hdf5 format.
@@ -296,9 +296,9 @@ class vv_calan(object):
         print('This method runs by default using the measurent duration as input to calculate the size of the file')
         print('If you had killed the process before it finished you could use the number of readings variable to change it.')
         if(n_reading==None):
-            parse_raw(filename, self.__read_cycles__*2)
+            parse_raw(filename, self.__read_cycles__*2, out_name=out_name)
         else:
-            parse_raw(filename, n_reading)
+            parse_raw(filename, n_reading,out_name=out_name)
 
 
 
@@ -514,6 +514,18 @@ class vv_calan(object):
         return [adc0, adc1, corr_re, corr_im]
 
 
+    def gen_pulse_out(self, pulse_width=50):
+        """pulse width: width of the pulse in ms
+        """
+        self.fpga.write_int('pulse_out',0)  #rst the machine
+        self.fpga.write_int('pulse_width', int(pulse_width*fpga_clk*10**3))
+        time.sleep(0.1)
+        self.fpga.write_int('pulse_out',1)
+        time.sleep(0.1)
+        sec = self.fpga.read_int('pulse_sec')
+        sub_sec = self.fpga.read_int('pulse_subsec')
+        return [sec, sub_sec]
+        
 
     def reset_freeze_cntr(self):
         #TODO

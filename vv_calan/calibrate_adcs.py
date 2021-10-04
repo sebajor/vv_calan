@@ -4,11 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import adc5g
 import pyvisa, datetime, tarfile, shutil, os 
-#import ipdb
 
 def calibrate_adcs_visa(roach_ip, gen_ip, bw, gen_freq=10, gen_pow=-3,load=0,
                         load_dir='', cal_dir='adc5gcal', manual=0):
-    #ipdb.set_trace()
     roach = cd.initialize_roach(roach_ip)
     snapnames = ['adcsnap0','adcsnap1']
     now = datetime.datetime.now()
@@ -98,20 +96,6 @@ def calibrate_adcs_visa(roach_ip, gen_ip, bw, gen_freq=10, gen_pow=-3,load=0,
     print("Done with all calibrations.")
     print("Close plots to finish.")
     plt.show()
-
-        
-
-
-
-
-
-        
-
-
-
-
-
-
 
 
 def create_snap_figure(snapnames, nsamples):
