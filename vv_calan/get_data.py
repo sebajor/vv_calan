@@ -1,7 +1,6 @@
 import numpy as np
 import struct
 
-
 def get_spect0(fpga):
     """Returns the real time spectrum of the ADC0
     """
@@ -16,7 +15,6 @@ def get_spect1(fpga):
     spect1 = np.array(struct.unpack('>8192Q', fpga.read('1_B2', 8192*8)))
     spect1 = 10*np.log10(spect1+1)
     return spect1
-
 
 def get_corr_re(fpga):
     """Returns the real time correlation between ADC0 and ADC1

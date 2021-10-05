@@ -288,17 +288,22 @@ class vv_calan(object):
 
 
 
-    def parse_raw_data(self, filename='raw_data', n_reading=None, out_name=None):
+    def parse_raw_data(self, filename='raw_data', out_name=None):
         """
         Parse the raw data after downloading the data from the 
         PowerPC and save it in hdf5 format.
         """
-        print('This method runs by default using the measurent duration as input to calculate the size of the file')
-        print('If you had killed the process before it finished you could use the number of readings variable to change it.')
-        if(n_reading==None):
-            parse_raw(filename, self.__read_cycles__*2, out_name=out_name)
-        else:
-            parse_raw(filename, n_reading,out_name=out_name)
+        #print('This method runs by default using the measurent duration as input to calculate the size of the file')
+        #print('If you had killed the process before it finished you could use the number of readings variable to change it.')
+        #first get the size of the file and get the 
+        chunk = 5*8192*8
+        file_size = os.path.getsize(filename)
+        n_reading = file_size/chunk
+        parse_raw(filename, n_reading, out_name=out_name)
+        #if(n_reading==None):
+        #    parse_raw(filename, self.__read_cycles__*2, out_name=out_name)
+        #else:
+        #    parse_raw(filename, n_reading,out_name=out_name)
 
 
 
@@ -342,9 +347,9 @@ class vv_calan(object):
         print(parameter)    
         os.system(parameter)
         """
-    def calibrate_adcs(self,gen_ip,gen_freq=10,gen_pow=-3,load=0,load_dir='',cal_dir='adc5gcal',manual=0):
-        calibrate_adcs_visa(self.IP, gen_ip,self.valon_freq, gen_freq=gen_freq, 
-                gen_pow=gen_pow, load=load, load_dir=load_dir, 
+    def calibrate_adcs(self,gen_ip, do_ogp=0, do_inl=0,gen_freq=10,gen_pow=-3,load=0,load_dir='',cal_dir='adc5gcal',manual=0):
+        calibrate_adcs_visa(self.IP, gen_ip,self.valon_freq,do_ogp=do_ogp, do_inl=do_inl,
+                gen_freq=gen_freq, gen_pow=gen_pow, load=load, load_dir=load_dir, 
                 cal_dir=cal_dir, manual=manual)
 
 

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import adc5g
 import pyvisa, datetime, tarfile, shutil, os 
 
-def calibrate_adcs_visa(roach_ip, gen_ip, bw, gen_freq=10, gen_pow=-3,load=0,
+def calibrate_adcs_visa(roach_ip, gen_ip, bw, do_ogp=0, do_inl=0,gen_freq=10, gen_pow=-3,load=0,
                         load_dir='', cal_dir='adc5gcal', manual=0):
     roach = cd.initialize_roach(roach_ip)
     snapnames = ['adcsnap0','adcsnap1']
@@ -36,51 +36,52 @@ def calibrate_adcs_visa(roach_ip, gen_ip, bw, gen_freq=10, gen_pow=-3,load=0,
     perform_mmcm_calibration(roach, 0, [snapnames[0]])
     perform_mmcm_calibration(roach, 1, [snapnames[1]])
     
-    adccal0 = ADCCalibrate(roach=roach, roach_name="", zdok=0,
-                snapshot=snapnames[0], dir=caldir, now=now,
-                clockrate=bw)
-    adccal1 = ADCCalibrate(roach=roach, roach_name="", zdok=1, 
-                snapshot=snapnames[1], dir=caldir, now=now, 
-                clockrate=bw)
+    if(do_ogp or do_inl):
+        adccal0 = ADCCalibrate(roach=roach, roach_name="", zdok=0,
+                    snapshot=snapnames[0], dir=caldir, now=now,
+                    clockrate=bw)
+        adccal1 = ADCCalibrate(roach=roach, roach_name="", zdok=1, 
+                    snapshot=snapnames[1], dir=caldir, now=now, 
+                    clockrate=bw)
 
-    if(not load):
-                #create calibration folder
-        os.mkdir(caldir)
-        print("Performing ADC5G OGP calibration, ZDOK0...")
-        adccal0.do_ogp(0, gen_freq, 10)
-        print("done")
-        print("Performing ADC5G OGP calibration, ZDOK1...")
-        adccal1.do_ogp(1, gen_freq, 10)
-        print("done")
-    
-        print("Performing ADC5G INL calibration, ZDOK0...")
-        adccal0.do_inl(0)
-        print("done")
-
-        print("Performing ADC5G INL calibration, ZDOK1...")
-        adccal1.do_inl(1)
-        print("done")
-        ##compress the calibrated data
-        compress_data(caldir)
-    else:
-        uncompress_data(load_dir)
-        #load the ogp
-        print("Loading ADC5G OGP calibration, ZDOK0...")
-        adccal0.load_calibrations(load_dir, 0, ['ogp'])
-        print("done")
-        print("Loading ADC5G OGP calibration, ZDOK1...")
-        adccal1.load_calibrations(load_dir, 1, ['ogp'])
-        print("done")
+        if(not load):
+                    #create calibration folder
+            os.mkdir(caldir)
+            print("Performing ADC5G OGP calibration, ZDOK0...")
+            adccal0.do_ogp(0, gen_freq, 10)
+            print("done")
+            print("Performing ADC5G OGP calibration, ZDOK1...")
+            adccal1.do_ogp(1, gen_freq, 10)
+            print("done")
         
-        #laod inl
-        print("Loading ADC5G INL calibration, ZDOK0...")
-        adccal0.load_calibrations(load_dir, 0, ['inl'])
-        print("done")
-        print("Loading ADC5G INL calibration, ZDOK1...")
-        adccal1.load_calibrations(load_dir, 1, ['inl'])
-        print("done")
-        #delete the uncompressed data
-        shutil.rmtree(load_dir)
+            print("Performing ADC5G INL calibration, ZDOK0...")
+            adccal0.do_inl(0)
+            print("done")
+
+            print("Performing ADC5G INL calibration, ZDOK1...")
+            adccal1.do_inl(1)
+            print("done")
+            ##compress the calibrated data
+            compress_data(caldir)
+        else:
+            uncompress_data(load_dir)
+            #load the ogp
+            print("Loading ADC5G OGP calibration, ZDOK0...")
+            adccal0.load_calibrations(load_dir, 0, ['ogp'])
+            print("done")
+            print("Loading ADC5G OGP calibration, ZDOK1...")
+            adccal1.load_calibrations(load_dir, 1, ['ogp'])
+            print("done")
+            
+            #laod inl
+            print("Loading ADC5G INL calibration, ZDOK0...")
+            adccal0.load_calibrations(load_dir, 0, ['inl'])
+            print("done")
+            print("Loading ADC5G INL calibration, ZDOK1...")
+            adccal1.load_calibrations(load_dir, 1, ['inl'])
+            print("done")
+            #delete the uncompressed data
+            shutil.rmtree(load_dir)
 
     #plot calibrated data
     snapdata_list = cd.read_snapshots(roach, snapnames, ">i1")
