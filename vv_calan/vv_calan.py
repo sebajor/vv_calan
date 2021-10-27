@@ -523,7 +523,7 @@ class vv_calan(object):
         """pulse width: width of the pulse in ms
         """
         self.fpga.write_int('pulse_out',0)  #rst the machine
-        self.fpga.write_int('pulse_width', int(pulse_width*fpga_clk*10**3))
+        self.fpga.write_int('pulse_width', int(pulse_width*self.fpga_clk*10**3))
         time.sleep(0.1)
         self.fpga.write_int('pulse_out',1)
         time.sleep(0.1)
