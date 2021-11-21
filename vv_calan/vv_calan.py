@@ -92,34 +92,25 @@ class vv_calan(object):
             unlock_error = the varition in seconds to rise an
             unlock flag
         """
-        T = 10**-2 #bit time of IRIGB00
-        sec_factor = 0.75                               #security factor (could be higher, but this value works..)
-        irig_pos_id = 0.8*T*self.fpga_clk*10**6*sec_factor
-        irig_1 = 0.5*T*self.fpga_clk*10**6*sec_factor
-        irig_0 = 0.2*T*self.fpga_clk*10**6*sec_factor
+        fpga_clk = self.fpga_clk*10**6
+        sec_parameter = 1.05
+        irig_0 = int(0.2*fpga_clk/100*sec_parameter)
+        irig_1 = int(0.5*fpga_clk/100*sec_parameter)
+        irig_pos_id = int(0.8*fpga_clk/100*sec_parameter)
 
         print('writing timestamp variables.....')
+        self.fpga.write_int('IRIG_control', 0b001)  #rst the fsm
         
-        #enable voltage translation, carefull if you have the roach connected
-        #to a timestap source you have to have the roach connected (not necessarily
-        #turn on) otherwise the voltage translator is going to reduce the IRIG signal
+        #enable voltage translation, 
         self.fpga.write_int('IRIG_voltage_oe',2)
-
 
         #those are the durations of every symbol in IRIG
         self.fpga.write_int('IRIG_irig_pos_id', irig_pos_id)
         self.fpga.write_int('IRIG_irig_1', irig_1)
         self.fpga.write_int('IRIG_irig_0', irig_0)
 
-
-
-        self.fpga.write_int('IRIG_sel_ind',0)           #1 only to debbugg the irig_read fsm
-
         #settings for the debouncer fsm
         self.fpga.write_int('IRIG_waiting_in_vain', 20) #cycles that the gpio values may vary until sets to one
-        self.fpga.write_int('IRIG_threshold', 20)       #cycles that the gpio values may vary until sets to zero
-        self.fpga.write_int('IRIG_top_count', 100)      #the number of symbols of the first data frame, for debbuging only
-        self.fpga.write_int('IRIG_bott_count', 100)     #the number of symbols of the dataframe, for debbuging only
 
 
         #set upper and lower limit of seconds that the timestamp
@@ -137,14 +128,10 @@ class vv_calan(object):
          This function enable obtain the time from the master clock
         """
         #reset the fsm to a known state
-        self.fpga.write_int('IRIG_hrd_rst', 1)
+        self.fpga.write_int('IRIG_control', 0b101)
         time.sleep(1)
-        self.fpga.write_int('IRIG_hrd_rst', 0)
-
         #start the calibration
-        self.fpga.write_int('IRIG_cal',1)
-        time.sleep(1)
-        self.fpga.write_int('IRIG_cal',0)
+        self.fpga.write_int('IRIG_hrd_rst', 0b010)
 
         #wait until the first frame is detected and received
         print('waiting for the master clock data...')
@@ -166,9 +153,9 @@ class vv_calan(object):
             #The first second is always over the upper lim, and the second its always below the lower lim because
                 # the fraction counter initialize only when the calibration is over. 
                 #From the third second the system is stable, so we rest the unlock flag.
-            time.sleep(3)
-            self.fpga.write_int('IRIG_try_again',1)
-            self.fpga.write_int('IRIG_try_again',0)
+            time.sleep(2)
+            self.fpga.write_int('IRIG_control',0b110)
+            self.fpga.write_int('IRIG_control',0b010)
 
             print('Timestamp calibration finished :D')
 
@@ -179,14 +166,14 @@ class vv_calan(object):
         """Translate the time from seconds of a year
         to day/hour/minutes/seconds
         """
-        toy = self.fpga.read_int('secs')
-        days = int(toy/(24.*3600))
-        hours =int((toy%(24.*3600))/3600)
-        minutes = int((toy%(24.*3600)%3600)/60)
-        secs = toy%(24.*3600)%3600%60
-        out = str(days)+'day'+str(hours)+':'+str(minutes)+':'+str(secs)
+        time_data = self.fpga.read_int('secs')
+        secs = time_data&63
+        mins = (time_data&(63<<6))>>6
+        hour = (time_data&(31<<12))>>12
+        day = (time_data&((2**9-1)<<17))>>17
+        out = str(day)+'day'+str(hour)+':'+str(mins)+':'+str(secs)
         print(out)
-        return out
+        return [secs,mins,hour,day]
 
 
     def get_unlock(self):
