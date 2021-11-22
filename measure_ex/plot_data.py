@@ -25,7 +25,7 @@ parser.add_argument("-c", "--corr", dest="correlator", action="store_true",
 parser.add_argument("-ph", "--phase", dest="phase", action="store_true",
         help="plot phase between the inputs")
 
-parser.add_argument("-f", "--freq", dest="freq2save", type=float, default=50.,
+parser.add_argument("-f", "--freq", dest="freq2save", type=float, default=60.01,
         help="Frequency to acquire")
 
 parser.add_argument("-p", "--point",dest="pt_vals", action="store_true",

@@ -23,7 +23,7 @@ parser.add_argument("-it", "--integ", dest="integ", type=float, default=10.*10**
 parser.add_argument("-t", "--time", dest="time_stamp", action="store_true",
     help="If used, initialize timestamp")
 
-parser.add_argument("-f", "--freq", dest="freq2save", type=float, default=50,
+parser.add_argument("-f", "--freq", dest="freq2save", type=float, default=60.01,
         help="frequency to save")
 
 def main():

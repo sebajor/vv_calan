@@ -131,7 +131,7 @@ class vv_calan(object):
         self.fpga.write_int('IRIG_control', 0b101)
         time.sleep(1)
         #start the calibration
-        self.fpga.write_int('IRIG_hrd_rst', 0b010)
+        self.fpga.write_int('IRIG_control', 0b010)
 
         #wait until the first frame is detected and received
         print('waiting for the master clock data...')
@@ -514,9 +514,15 @@ class vv_calan(object):
         time.sleep(0.1)
         self.fpga.write_int('pulse_out',1)
         time.sleep(0.1)
-        sec = self.fpga.read_int('pulse_sec')
+        time_data = self.fpga.read_int('pulse_sec')
+        #sec = self.get_hour(sec)
+        secs = time_data&63
+        mins = (time_data&(63<<6))>>6
+        hour = (time_data&(31<<12))>>12
+        day = (time_data&((2**9-1)<<17))>>17
+        out = [secs, mins,hour,day]
         sub_sec = self.fpga.read_int('pulse_subsec')
-        return [sec, sub_sec]
+        return [out, sub_sec]
         
 
     def reset_freeze_cntr(self):
