@@ -104,11 +104,11 @@ class plot_data():
                 output.append(data)
                 continue
             if(self.plots[i] == 'corr_re'):
-                data = 10*np.log10(get_corr_re(self.fpga)+1)
+                data = get_corr_re(self.fpga)
                 output.append(data)
                 continue
             if(self.plots[i] == 'corr_im'):
-                data = 10*np.log10(get_corr_im(self.fpga)+1)
+                data = get_corr_im(self.fpga)
                 output.append(data)
                 continue
             else:

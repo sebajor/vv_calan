@@ -1,12 +1,12 @@
 #!/bin/bash
 python2 plot_data.py \
-    --ip    192.168.0.40 \
+    --ip        10.10.1.90 \
     --boffile vv_casper_v2.bof.gz \
-    --freq          50  \
+    --freq          60.01  \
     --fi            45  \
     --fe            55  \
-    --spec         \
-    --corr         \
+    --spec          \
+    --phase         \
     --point        
 
     

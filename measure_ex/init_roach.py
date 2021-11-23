@@ -1,5 +1,5 @@
 from vv_calan import vv_calan
-import argparser
+import argparse
 
 parser = argparse.ArgumentParser(
     description="intialize roach")
@@ -9,7 +9,7 @@ parser.add_argument("-i", "--ip", dest="ip", default=None,
 parser.add_argument("-b", "--boffile", dest="bof",
     help="Boffile to load into the FPGA.")
 
-parser.add_argument("-bw", "--bw", dest="bw", deafult=135.)
+parser.add_argument("-bw", "--bw", dest="bw", default=135.)
 
 parser.add_argument("-u", "--upload", dest="upload", action="store_true",
     help="If used, upload .bof from PC memory (ROACH2 only).")
@@ -17,7 +17,7 @@ parser.add_argument("-u", "--upload", dest="upload", action="store_true",
 parser.add_argument("-v", "--vector", dest="vv_init", action="store_true",
     help="If used, initialize the vector voltmeter")
 
-parser.add_argument("-it", "--integ", dest="integ", type=float, default=10.*10**3,
+parser.add_argument("-it", "--integ", dest="integ", type=float, default=1.2*10**-3,
     help="Integration tieme.")
 
 parser.add_argument("-t", "--time", dest="time_stamp", action="store_true",
@@ -36,9 +36,10 @@ def main():
         roach.init_vv(integ_time=args.integ)
     if(args.time_stamp):
         roach.init_timestamp()
-    ind2save = roach.get_index(args.freq2save)
+    channel_index = roach.get_index(args.freq2save)
+    print("saving channel: %i"%(channel_index))
     roach.init_chann_aqc(channel_index)
 
-if __name__ = '__main__':
+if __name__ == '__main__':
     main()
 

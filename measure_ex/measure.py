@@ -33,7 +33,7 @@ def main():
     roach.ppc_download_data(pc_IP=args.my_ip)
     time.sleep(1)
     roach.parse_raw_data('raw_data', out_name=args.savefile)
-    if(args.clean)
+    if(args.clean):
         os.rmdir('raw_data')
     
 if __name__ == '__main__':

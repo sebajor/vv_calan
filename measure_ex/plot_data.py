@@ -8,7 +8,7 @@ parser.add_argument("-i", "--ip", dest="ip", default=None,
     help="ROACH IP address.")
 parser.add_argument("-b", "--boffile", dest="bof", default=None,
         help="boffile")
-parser.add_argument("-bw", "--bw", dest="bw", deafult=135.)
+parser.add_argument("-bw", "--bw", dest="bw", default=135.)
 
 parser.add_argument("-fi", "--fi", dest="fi", default=0,
         help="Init frequency for the plots")
@@ -37,8 +37,8 @@ def main():
     roach = vv_calan(args.ip, args.bof, fs)
     opts = []
     if(args.spect):
-        opts.append('spec0')
-        opts.append('spec1')
+        opts.append('spect0')
+        opts.append('spect1')
     if(args.correlator):
         opts.append('correlation')
     if(args.phase):
@@ -46,10 +46,11 @@ def main():
     if(args.pt_vals):
         opts.append('chann_values')
 
-    chan2save = roach.get_index(args.freq2save)
+    chann2save = roach.get_index(args.freq2save)
     print('Looking at channel: '+str(chann2save))
     roach.create_plot()
-    roach.generate_plot(plots=opts, freq=[args.fi, args.fe], chann=chan2save)
+    print(opts)
+    roach.generate_plot(plots=opts, freq=[args.fi, args.fe], chann=chann2save)
 
 
 if __name__ == '__main__':
