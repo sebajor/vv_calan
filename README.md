@@ -1,6 +1,7 @@
 # vv_calan
 Python Package to interface the vector voltmeter developed in ROACH2 board
-Important note, it just work with 
+
+Important note, it just work with python2.
 
 # Installation:
 
