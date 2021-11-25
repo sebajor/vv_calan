@@ -13,7 +13,7 @@ parser.add_argument("-bw", "--bw", dest="bw", default=135.)
 parser.add_argument("-fi", "--fi", dest="fi", default=0,
         help="Init frequency for the plots")
 
-parser.add_argument("-fe", "--fe", dest="fe", default=0,
+parser.add_argument("-fe", "--fe", dest="fe", default=67.5,
         help="End frequency for the plots")
 
 parser.add_argument("-s", "--spec", dest="spect", action="store_true",
@@ -46,11 +46,10 @@ def main():
     if(args.pt_vals):
         opts.append('chann_values')
 
-    chann2save = roach.get_index(args.freq2save)
+    chann2save = roach.get_index(float(args.freq2save))
     print('Looking at channel: '+str(chann2save))
     roach.create_plot()
-    print(opts)
-    roach.generate_plot(plots=opts, freq=[args.fi, args.fe], chann=chann2save)
+    roach.generate_plot(plots=opts, freq=[float(args.fi), float(args.fe)], chann=chann2save)
 
 
 if __name__ == '__main__':

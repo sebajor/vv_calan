@@ -3,16 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 
-roachIP = '192.168.1.10'
+roachIP = '192.168.1.14'
 boffile = 'vv_casper_v2.bof.gz'
 valon_freq = 1080
-your_pc_ip =  '192.168.1.105'
+your_pc_ip =  '192.168.1.20'
 
 
 #hyperparmeters
 acc_time = 1.2*10**-3    ##1.2 ms
-freq2save = 60.01          ##mhz
-duration = 5           #minutes
+freq2save = 60.          ##mhz
+duration = 2           #minutes
 
 #calibration source
 gen_ip = '192.168.1.39'
@@ -32,7 +32,7 @@ time.sleep(1)
 #intialize vector voltmeter and timestamp
 print("intializing vector voltmeter and timestamp")
 roach.init_vv(acc_time)
-roach.init_timestamp()
+#roach.init_timestamp()
 
 print(roach.get_hour())
 #check if the timestamp is locked 
