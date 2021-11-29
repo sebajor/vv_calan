@@ -220,9 +220,9 @@ class vv_calan(object):
         
         """
         if(manual_bw):
-            self.plotter.plotter(plots, chann=chann, freq=freq, bw=bw)        
+            self.plotter.plotter(plots, chann=chann, freq=freq, bw=bw, acc_len=self.n_acc)        
         else:
-            self.plotter.plotter(plots,chann=chann, freq=freq,bw=[0,self.bw])
+            self.plotter.plotter(plots,chann=chann, freq=freq,bw=[0,self.bw], acc_len=self.n_acc)
 
 ###
 ###    POWERPC CODES: YOU MUST UPLOAD THE CODES TO THE 

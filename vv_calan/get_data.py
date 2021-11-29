@@ -1,18 +1,20 @@
 import numpy as np
 import struct
 
-def get_spect0(fpga):
+def get_spect0(fpga, acc_len=10):
     """Returns the real time spectrum of the ADC0
     """
     spect0 = np.array(struct.unpack('>8192Q',fpga.read('1_A2', 8192*8)))
+    spect0 = spect0/float(acc_len)
     spect0 = 10*np.log10(spect0+1)
     return spect0
 
 
-def get_spect1(fpga):
+def get_spect1(fpga, acc_len=10):
     """Returns the real time spectrum of the ADC1
     """
     spect1 = np.array(struct.unpack('>8192Q', fpga.read('1_B2', 8192*8)))
+    spect1 = spect1/float(acc_len)
     spect1 = 10*np.log10(spect1+1)
     return spect1
 

@@ -13,7 +13,7 @@ class plot_data():
         self.fpga = fpga
         fpga.write_int('cnt_rst',0)
 
-    def plotter(self, plots, chann=6068, freq=[0,67.5], bw=[0,67.5], n_points=8192):
+    def plotter(self, plots, chann=6068, freq=[0,67.5], bw=[0,67.5], n_points=8192, acc_len=10):
         """
             Plots an animation of the real time value (at the
             network speed).
@@ -31,7 +31,7 @@ class plot_data():
             in the ADC0 and ADC1, also gives the phase measured 
             between the inputs.
         """
-    
+        self.acc_len = float(acc_len)
         self.plots = plots
         self.chann = chann
         self.freq = freq
@@ -54,8 +54,8 @@ class plot_data():
             self.plots.append('corr_im')
 
     
-        self.plot_info = {  'spect0':['Spectrum ADC0', '[dB]', '[MHz]',(15, 180), (self.freq)],
-                            'spect1':['Spectrum ADC1', '[dB]', '[MHz]', (15, 180), (self.freq)],
+        self.plot_info = {  'spect0':['Spectrum ADC0', '[dBm]', '[MHz]',(-110, 0), (self.freq)],
+                            'spect1':['Spectrum ADC1', '[dBm]', '[MHz]', (-110, 0), (self.freq)],
                             'corr_re':['Real Correlation', '[dB]', '[MHz]', (15, 180), (self.freq)],
                             'corr_im':['Imaginary Correlation', '[dB]', '[MHz]', (15,180), (self.freq)],
                             'phase':['Relative Phase', 'deg', '[MHz]', (-180, 180), (self.freq)]}
@@ -96,11 +96,13 @@ class plot_data():
                 output.append(data)
                 continue
             if(self.plots[i] == 'spect0'):
-                data = get_spect0(self.fpga)
+                data = get_spect0(self.fpga, self.acc_len)
+                data = data-138.3
                 output.append(data)
                 continue
             if(self.plots[i] == 'spect1'):
-                data = get_spect1(self.fpga)
+                data = get_spect1(self.fpga, self.acc_len)
+                data = data-138.3
                 output.append(data)
                 continue
             if(self.plots[i] == 'corr_re'):
@@ -150,13 +152,13 @@ class plot_data():
         ax2.set_title('ADC0 power')
         ax2.set_ylabel('[dB]')
         ax2.set_xlabel('Samples')
-        ax2.set_ylim(10, 160)
+        ax2.set_ylim(-110, 0)
         ax2.set_xlim(0, self.n_points)
         
         ax3.set_title('ADC1 power')
         ax3.set_ylabel('[dB]')
         ax3.set_xlabel('Samples')
-        ax3.set_ylim(10, 160)
+        ax3.set_ylim(-110, 0)
         ax3.set_xlim(0, self.n_points)
 
         ax1.grid()
@@ -172,8 +174,10 @@ class plot_data():
         
     def anim_chann(self, i):
         [pow0, pow1, re, im] =  get_chann_data(self.fpga, self.n_points)
-        powA = 10*np.log10(pow0+1)
-        powB = 10*np.log10(pow1+1)
+        pow0 = pow0/float(self.acc_len)
+        pow1 = pow1/float(self.acc_len)
+        powA = 10*np.log10(pow0+1)-138.3  ##to match dbm
+        powB = 10*np.log10(pow1+1)-138.3
         ang = np.rad2deg(np.arctan2(im,re))
         
         self.data_chann[0].set_data(np.arange(self.n_points), ang)
