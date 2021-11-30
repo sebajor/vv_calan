@@ -1,5 +1,5 @@
 from vv_calan import vv_calan
-import argparse
+import argparse, time
 import calandigital as calan
 
 parser = argparse.ArgumentParser(
@@ -35,6 +35,7 @@ def main():
     args = parser.parse_args()
     fs = args.bw*8
     roach = vv_calan(args.ip, args.bof, fs)
+    time.sleep(0.5)
     opts = []
     if(args.spect):
         opts.append('spect0')

@@ -525,6 +525,16 @@ class vv_calan(object):
         return [out, sub_sec]
         
 
+    def timeroach(self, time_data, subsec, fpga_clk=135*10**6):
+        secs = time_data&63
+        mins = (time_data&(63<<6))>>6
+        hour = (time_data&(31<<12))>>12
+        day = (time_data&((2**9-1)<<17))>>17
+        sub = subsec/float(fpga_clk)
+        out = [sub,secs, mins,hour,day]
+        return out
+
+
     def reset_freeze_cntr(self):
         #TODO
         return
