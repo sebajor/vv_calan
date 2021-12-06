@@ -261,10 +261,11 @@ class vv_calan(object):
         stat = PPC_check_status(self.IP, sleep_time=sleep_time)        
         return stat
 
-    def ppc_download_data(self, pc_IP):
+    def ppc_download_data(self, pc_IP, sleep_time=2):
         """Download the saved data to a computer
         """
         PPC_download_data(self.IP, pc_IP)
+        time.sleep(sleep_time)
 
 
     def ppc_finish_meas(self, sleep_time=0.5):
