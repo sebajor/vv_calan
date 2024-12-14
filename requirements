@@ -4,20 +4,22 @@ h5py
 numpy
 scipy
 matplotlib==2.2.3
+#matplotlib
 pyserial
-pyvisa==1.10.1
-pyvisa-py==0.3
 setuptools
-corr
+#corr
+git+https://github.com/ska-sa/corr.git
 git+https://github.com/sma-wideband/adc_tests.git
 git+https://github.com/nrao/ValonSynth.git
 git+https://github.com/sebajor/calandigital
 git+https://github.com/nrao/ValonSynth.git
-git+https://github.com/FrancoCalan/roach_tools
+#git+https://github.com/FrancoCalan/roach_tools
 
 
 git+https://github.com/ska-sa/PySPEAD.git
 git+https://github.com/sma-wideband/adc_tests.git
 
+pyvisa==1.10.1
+pyvisa-py
 
 

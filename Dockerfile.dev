@@ -1,0 +1,23 @@
+FROM python:2.7
+
+ARG UID=1000
+
+RUN apt-get update
+
+RUN adduser -q --disabled-login --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --uid $UID myuser
+USER myuser
+WORKDIR /home/myuser
+RUN mkdir /home/myuser/scripts
+RUN mkdir /home/myuser/libs
+RUN mkdir /home/myuser/data
+
+COPY --chown=myuser:myuser requirements requirements
+RUN pip install --user -r requirements.txt
+RUN pip install ipython
+
+ENV PATH="/home/myuser/.local/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/home/myuser/libs:$(LD_LIBRARY_PATH)"
+
+CMD ["bash"]
+
+
